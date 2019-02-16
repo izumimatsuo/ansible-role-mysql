@@ -1,0 +1,49 @@
+---
+- name: install mysql repository
+  yum:
+    name: "{{ MY_PACKAGE_RPM }}"
+  tags: mysql
+
+- block:
+    - name: install yum-utils package
+      yum:
+        name: yum-utils
+    - name: "detected {{ MY_PACKAGE_ENABLE }} status"
+      shell: "mysqld --version | grep {{ MY_VERSION }}"
+      register: mysql_status
+      failed_when: no
+      check_mode: no
+      changed_when: mysql_status.rc != 0
+    - block:
+      - name: "disable {{ MY_PACKAGE_DISABLE }} repository"
+        shell: "yum-config-manager --disable {{ MY_PACKAGE_DISABLE }}-community"
+      - name: "enable {{ MY_PACKAGE_ENABLE }} repository"
+        shell: "yum-config-manager --enable {{ MY_PACKAGE_ENABLE }}-community"
+      check_mode: no
+      when: mysql_status is changed
+    - name: install mysql package
+      yum:
+        name: mysql-community-server
+  tags: mysql
+
+- name: copy mysql conf
+  template:
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+    mode: 0600
+  notify: restart mysql service
+  tags: mysql
+
+- name: setup network conf
+  shell: echo "NETWORKING=yes" > /etc/sysconfig/network
+  args:
+    creates: /etc/sysconfig/network
+  check_mode: no
+  tags: mysql
+
+- name: start mysql service
+  service:
+    name: mysqld
+    state: started
+    enabled: yes
+  tags: mysql
