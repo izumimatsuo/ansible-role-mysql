@@ -15,10 +15,10 @@
       check_mode: no
       changed_when: mysql_status.rc != 0
     - block:
-      - name: "disable {{ MY_PACKAGE_DISABLE }} repository"
-        shell: "yum-config-manager --disable {{ MY_PACKAGE_DISABLE }}-community"
-      - name: "enable {{ MY_PACKAGE_ENABLE }} repository"
-        shell: "yum-config-manager --enable {{ MY_PACKAGE_ENABLE }}-community"
+        - name: "disable {{ MY_PACKAGE_DISABLE }} repository"
+          shell: "yum-config-manager --disable {{ MY_PACKAGE_DISABLE }}-community"
+        - name: "enable {{ MY_PACKAGE_ENABLE }} repository"
+          shell: "yum-config-manager --enable {{ MY_PACKAGE_ENABLE }}-community"
       check_mode: no
       when: mysql_status is changed
     - name: install mysql package

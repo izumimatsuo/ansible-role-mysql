@@ -1,5 +1,6 @@
 ---
 MY_VERSION: 5.6
-MY_PACKAGE_RPM: http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+MY_PACKAGE_RPM: >
+  http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
 MY_PACKAGE_ENABLE: mysql56
 MY_PACKAGE_DISABLE: mysql57
