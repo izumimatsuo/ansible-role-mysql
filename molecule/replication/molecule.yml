@@ -1,0 +1,37 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: instance-1
+    groups:
+      - rdb-servers
+    image: centos:7
+    privileged: true
+    command: /sbin/init
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      rdb-servers:
+        mysql_replication: yes
+    host_vars:
+      instance-1:
+        mysql_server_id: 1
+        mysql_replication_role: master
+      instance-2:
+        mysql_server_id: 2
+        mysql_replication_role: slave
+  lint:
+    name: ansible-lint
+scenario:
+  name: replication
+verifier:
+  name: testinfra
+  options:
+    v: 1
+  lint:
+    name: flake8

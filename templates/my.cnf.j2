@@ -2,6 +2,16 @@
 # http://dev.mysql.com/doc/refman/5.6/en/server-configuration-defaults.html
 
 [mysqld]
+{% if mysql_replication %}
+server-id={{ mysql_server_id }}
+
+log_bin=mysql-bin
+sync_binlog=1
+
+relay_log_info_repository=TABLE
+relay_log_recovery=ON
+
+{% endif %}
 port={{ mysql_listen_port }}
 #
 # Remove leading # and set to the amount of RAM for the most important data
