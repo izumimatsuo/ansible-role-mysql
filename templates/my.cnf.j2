@@ -8,6 +8,10 @@ server-id={{ mysql_server_id }}
 log_bin=mysql-bin
 sync_binlog=1
 
+gtid-mode=on
+enforce-gtid-consistency
+log-slave-updates
+
 relay_log_info_repository=TABLE
 relay_log_recovery=ON
 

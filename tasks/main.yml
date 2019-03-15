@@ -23,7 +23,9 @@
       when: mysql_status is changed
     - name: install mysql package
       yum:
-        name: mysql-community-server
+        name:
+          - MySQL-python
+          - mysql-community-server
   tags: mysql
 
 - name: copy mysql conf
@@ -47,3 +49,51 @@
     state: started
     enabled: yes
   tags: mysql
+
+- name: change the root password
+  command: >
+    mysqladmin password '{{ mysql_user_password }}' -u root
+
+- name: create replication user to master
+  mysql_user:
+    login_user: "{{ mysql_user_name }}"
+    login_password: "{{ mysql_user_password }}"
+    name: "{{ mysql_replication_user.name }}"
+    host: "{{ mysql_replication_user.host | default('%') }}"
+    password: "{{ mysql_replication_user.password }}"
+    priv: "{{ mysql_replication_user_priv | default('*.*:REPLICATION SLAVE,REPLICATION CLIENT') }}"
+    state: present
+  when: mysql_replication_role == 'master'
+
+- name: get replication slave status to slave
+  mysql_replication:
+    mode: getslave
+    login_user: "{{ mysql_user_name }}"
+    login_password: "{{ mysql_user_password }}"
+  register: slave
+  when: mysql_replication_role == 'slave'
+
+- debug: msg={{ slave }}
+
+- name: change replication master to slave
+  mysql_replication:
+    mode: changemaster
+    login_user: "{{ mysql_user_name }}"
+    login_password: "{{ mysql_user_password }}"
+    master_host: "{{ mysql_replication_master.host }}"
+    master_port: "{{ mysql_replication_master.port | default(3306) }}"
+    master_user: "{{ mysql_replication_user.name }}"
+    master_password: "{{ mysql_replication_user.password }}"
+    master_auto_position: 1
+  when: >
+    mysql_replication_role == 'slave'
+    and slave.Is_Slave is defined and not slave.Is_Slave
+
+- name: start replication to slave
+  mysql_replication:
+    mode: startslave
+    login_user: "{{ mysql_user_name }}"
+    login_password: "{{ mysql_user_password }}"
+  when: >
+    mysql_replication_role == 'slave'
+    and slave.Is_Slave is defined and not slave.Is_Slave
