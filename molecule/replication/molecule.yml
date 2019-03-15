@@ -24,15 +24,12 @@ provisioner:
     group_vars:
       rdb-servers:
         mysql_replication: yes
-        mysql_user_name: root
-        mysql_user_password: password
+        mysql_user:
+          name: root
+          password: password
         mysql_replication_user:
           name: repl
-          host: instance-2
           password: password
-        mysql_replication_master:
-          host: instance-1
-          port: 3306
     host_vars:
       instance-1:
         mysql_server_id: 1
