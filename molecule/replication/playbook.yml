@@ -2,13 +2,15 @@
 - name: Converge
   hosts: all
   pre_tasks:
-    - name: get master host ip
+    - name: get host ip
       local_action: shell docker inspect --format \{\{.NetworkSettings.IPAddress\}\} instance-1
       register: instance_ip
       changed_when: false
+      check_mode: no
     - name: set fact
       set_fact:
         mysql_replication_master: "{{ instance_ip.stdout }}"
-    - debug: msg={{ mysql_replication_master }}
+      changed_when: false
+      check_mode: no
   roles:
     - role: ../../../

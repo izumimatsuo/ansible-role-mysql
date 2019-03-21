@@ -7,11 +7,19 @@ lint:
   name: yamllint
 platforms:
   - name: instance
+    groups:
+      - rdb-servers
     image: centos:7
     privileged: true
     command: /sbin/init
 provisioner:
   name: ansible
+  inventory:
+    group_vars:
+      rdb-servers:
+        mysql_user:
+          name: root
+          password: password
   lint:
     name: ansible-lint
 scenario:

@@ -1,10 +1,4 @@
 ---
-- name: change the root password
-  command: >
-    mysqladmin password '{{ mysql_user.password }}' -u root
-  changed_when: false
-  tags: mysql-replication
-
 - name: create replication user to master
   mysql_user:
     login_user: "{{ mysql_user.name }}"

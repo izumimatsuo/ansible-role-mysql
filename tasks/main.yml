@@ -50,6 +50,13 @@
     enabled: yes
   tags: mysql
 
+- name: change the root password
+  command: >
+    mysqladmin password '{{ mysql_user.password }}' -u root
+  when: mysql_status is changed
+  notify: restart mysql service
+  tags: mysql
+
 - include_tasks: replication.yml
   when: mysql_replication
   tags: mysql-replication

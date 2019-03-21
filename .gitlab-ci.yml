@@ -11,4 +11,4 @@ before_script:
 ansible_build:
     stage: build
     script:
-        - molecule test
+        - molecule test --all
