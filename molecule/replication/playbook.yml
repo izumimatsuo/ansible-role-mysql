@@ -3,7 +3,8 @@
   hosts: all
   pre_tasks:
     - name: get host ip
-      local_action: shell docker inspect --format \{\{.NetworkSettings.IPAddress\}\} instance-1
+      shell: docker inspect --format \{\{.NetworkSettings.IPAddress\}\} instance-1
+      delegate_to: localhost
       register: instance_ip
       changed_when: false
       check_mode: no

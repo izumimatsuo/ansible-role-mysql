@@ -5,7 +5,7 @@
   tags: mysql
 
 - name: "detected {{ MY_PACKAGE_ENABLE }} status"
-  shell: "mysqld --version | grep {{ MY_VERSION }}"
+  shell: "set -o pipefail; mysqld --version | grep {{ MY_VERSION }}"
   register: mysql_status
   failed_when: no
   check_mode: no
