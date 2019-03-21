@@ -45,7 +45,7 @@
 
 - name: change the root password
   command: >
-    mysqladmin password '{{ mysql_user.password }}' -u root
+    mysqladmin password '{{ mysql_admin_password }}' -u root
   when: mysql_status is changed
   notify: restart mysql service
   tags: mysql

@@ -24,9 +24,7 @@ provisioner:
     group_vars:
       rdb-servers:
         mysql_replication: yes
-        mysql_user:
-          name: root
-          password: password
+        mysql_admin_password: password
         mysql_replication_user:
           name: repl
           password: password

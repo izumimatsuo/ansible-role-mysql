@@ -17,9 +17,7 @@ provisioner:
   inventory:
     group_vars:
       rdb-servers:
-        mysql_user:
-          name: root
-          password: password
+        mysql_admin_password: password
   lint:
     name: ansible-lint
 scenario:
