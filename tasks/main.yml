@@ -4,28 +4,21 @@
     name: "{{ MY_PACKAGE_RPM }}"
   tags: mysql
 
-- block:
-    - name: install yum-utils package
-      yum:
-        name: yum-utils
-    - name: "detected {{ MY_PACKAGE_ENABLE }} status"
-      shell: "mysqld --version | grep {{ MY_VERSION }}"
-      register: mysql_status
-      failed_when: no
-      check_mode: no
-      changed_when: mysql_status.rc != 0
-    - block:
-        - name: "disable {{ MY_PACKAGE_DISABLE }} repository"
-          shell: "yum-config-manager --disable {{ MY_PACKAGE_DISABLE }}-community"
-        - name: "enable {{ MY_PACKAGE_ENABLE }} repository"
-          shell: "yum-config-manager --enable {{ MY_PACKAGE_ENABLE }}-community"
-      check_mode: no
-      when: mysql_status is changed
-    - name: install mysql package
-      yum:
-        name:
-          - MySQL-python
-          - mysql-community-server
+- name: "detected {{ MY_PACKAGE_ENABLE }} status"
+  shell: "mysqld --version | grep {{ MY_VERSION }}"
+  register: mysql_status
+  failed_when: no
+  check_mode: no
+  changed_when: mysql_status.rc != 0
+  tags: mysql
+
+- name: install mysql package
+  yum:
+    enablerepo: "{{ MY_PACKAGE_ENABLE }}-community"
+    disablerepo: "{{ MY_PACKAGE_DISABLE }}-community"
+    name:
+      - MySQL-python
+      - mysql-community-server
   tags: mysql
 
 - name: copy mysql conf
